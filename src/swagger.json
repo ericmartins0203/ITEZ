@@ -1,0 +1,910 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ITEZ API",
+    "description": "This is an API Rest maked in NodeJs to control your finances",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "Description": "API of development"
+    }
+  ],
+  "paths": {
+    "/user": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Show user info and balance",
+        "summary": "Show user info",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetUserResponse"
+                  }
+                },
+                "example": [
+                  {
+                    "message": "User retrieved successfully",
+                    "user": {
+                      "id": "a52bf31b-947f-44f6-8cb3-100af35a41b7",
+                      "name": "eric",
+                      "email": "kenzie@gmail.com",
+                      "balance": 344.68
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          },
+          "403": {
+            "description": "User not found"
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Update a user info.",
+        "summary": "Update a user.",
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "proprierties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "name": "eric",
+                "password": "eric02",
+                "email": "eric@gmail.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/DefaultUserResponse"
+                },
+                "example": {
+                  "message": "User updated successfully",
+                  "updatedUser": {
+                    "name": "eric",
+                    "email": "eric@gmail.com",
+                    "balance": 344.68
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "proprierties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "Invalid Type": {
+                  "value": {
+                    "message": "Type name must be string."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Delete user.",
+        "summary": "Delete user.",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "proprierties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "User deleted successfully"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          }
+        }
+      }
+    },
+    "/user/signup": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Create a new user",
+        "description": "Add a new user. The fileds 'name', 'email' and 'password' are not optional when you want to create a new user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              },
+              "examples": {
+                "name": "kenzie",
+                "password": "kenzie",
+                "email": "kenzie@gmail.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/DefaultUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User already exists."
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          }
+        }
+      }
+    },
+    "/user/signin": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Login with user",
+        "description": "Login in user, and return a token.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUser"
+              },
+              "examples": {
+                "password": "kenzie",
+                "email": "kenzie@gmail.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Wrong email or password!"
+          }
+        }
+      }
+    },
+    "/user/received": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Show all receiveds.",
+        "summary": "Show all receiveds from user",
+        "tags": ["Received"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetReceivedResponse"
+                  }
+                },
+                "example": {
+                  "message": "Received retrieved successfully",
+                  "received": [
+                    {
+                      "id": "69c11ae9-d7b5-412e-9023-32d8c6b94aa5",
+                      "value": 5,
+                      "date": "2022-05-05T00:00:00.000-03:00",
+                      "description": "salário"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Received"],
+        "summary": "Create a new received",
+        "description": "Add a new received. The fileds 'value' and 'date' are not optional when you want to create a new received.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReceived"
+              },
+              "examples": {
+                "value": 2000,
+                "date": "01/05/2022",
+                "description": "salário"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/CreateReceivedResponse"
+                },
+                "example": {
+                  "message": "Received created successfully",
+                  "newReceived": {
+                    "id": "34e01baa-1d79-410b-9201-884e04380652",
+                    "value": 2000,
+                    "date": "2022-01-05T03:00:00.000Z",
+                    "description": "salário"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          }
+        }
+      }
+    },
+    "/user/received/{id}": {
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update a received.",
+        "description": "Update a user received, you can pass value, date and description.",
+        "tags": ["Received"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Received id"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "proprierties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "value": 3000,
+                "date": "05/05/2022",
+                "description": "salário com hora extra"
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/DefaultUserResponse"
+                  },
+                  "example": {
+                    "message": "Received updated successfully",
+                    "newReceived": {
+                      "id": "69c11ae9-d7b5-412e-9023-32d8c6b94aa5",
+                      "value": 3000,
+                      "date": "2022-05-05T03:00:00.000Z",
+                      "description": "salário com hora extra"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "proprierties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "Invalid Type": {
+                  "value": {
+                    "message": "Type name must be string."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Delete received.",
+        "description": "Delete received just passing the id.",
+        "tags": ["Received"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Received id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "proprierties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Received deleted successfully"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          }
+        }
+      }
+    },
+    "/user/expend": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "description": "Show all expends.",
+        "summary": "Show all expends from user",
+        "tags": ["Expend"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetExpendResponse"
+                  }
+                },
+                "example": {
+                  "message": "Expend retrieved successfully",
+                  "received": [
+                    {
+                      "id": "0080cca7-f913-498e-a79d-d2b30d35c6de",
+                      "value": 30,
+                      "date": "2022-03-05T03:00:00.000Z",
+                      "type": "alimentação",
+                      "description": "Almoço"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Expend"],
+        "summary": "Create a new expend",
+        "description": "Add a new expend. The fileds 'value', 'type' and 'date' are not optional when you want to create a new expend.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExpend"
+              },
+              "examples": {
+                "value": 30,
+                "date": "03/05/2022",
+                "type": "alimentação",
+                "description": "Almoço"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/CreateExpendResponse"
+                },
+                "example": {
+                  "message": "Expend created successfully",
+                  "newExpend": {
+                    "id": "0080cca7-f913-498e-a79d-d2b30d35c6de",
+                    "value": 30,
+                    "date": "2022-03-05T03:00:00.000Z",
+                    "description": "Almoço"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          }
+        }
+      }
+    },
+    "/user/expend/{id}": {
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update a expend.",
+        "description": "Update a user expend, you can pass value, type, date and description.",
+        "tags": ["Expend"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Expend id"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "proprierties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "value": 40,
+                "date": "05/05/2022",
+                "description": "Janta"
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/CreateExpendResponse"
+                  },
+                  "example": {
+                    "message": "Expend updated successfully",
+                    "newExpend": {
+                      "id": "9de65125-54c8-4c42-9273-38bde9d4e241",
+                      "value": 40,
+                      "date": "2022-05-05T03:00:00.000Z",
+                      "description": "Janta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "proprierties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "Invalid Type": {
+                  "value": {
+                    "message": "Type name must be string."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Delete expend.",
+        "description": "Delete expend just passing the id.",
+        "tags": ["Expend"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Expend id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "proprierties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Expend deleted successfully"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing authorization headers"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "UserCreate": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "GetUserResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "balance": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "DefaultUserResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "balance": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "CreateUser": {
+        "type": "object",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginUser": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "GetReceivedResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            },
+            "received": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "date": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateReceived": {
+        "type": "object",
+        "required": ["value", "date"],
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateReceivedResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "received": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              },
+              "date": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "GetExpendResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            },
+            "expend": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "type": {
+                  "type": "number"
+                },
+                "date": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateExpend": {
+        "type": "object",
+        "required": ["value", "date"],
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateExpendResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "received": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              },
+              "date": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

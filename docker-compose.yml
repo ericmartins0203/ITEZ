@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  postgres:
+    container_name: itez_db
+    image: postgres:alpine
+    ports:
+      - 5433:5433
+    env_file:
+      - .env
+  app:
+    container_name: itez-app
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/app:ro
+    environment:
+      - NODE_ENV=docker
+      - DB_HOST=postgres
+    depends_on:
+      - postgres
+    command: sh -c "yarn typeorm migration:run -d src/data-source.ts && yarn dev"
